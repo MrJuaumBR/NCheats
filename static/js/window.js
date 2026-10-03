@@ -1,10 +1,3 @@
-/* ============================================================
-   window.js — Windows-style draggable window manager
-   ============================================================
-   Self-contained. Finds its own DOM elements and exposes
-   window.WindowManager for the rest of the app to drive.
-   ============================================================ */
-
 (function () {
   'use strict';
 
@@ -34,8 +27,6 @@
     restore: null,
     drag: null
   };
-
-  /* ---------- Geometry ---------- */
 
   function setPosition(x, y) {
     if (!WINDOW_EL) return;
@@ -77,8 +68,6 @@
       Math.round((window.innerHeight - h) / 2)
     );
   }
-
-  /* ---------- Visibility ---------- */
 
   function open() {
     if (!LAYER || !WINDOW_EL || state.open) return;
@@ -172,8 +161,6 @@
     WINDOW_EL.focus({ preventScroll: true });
   }
 
-  /* ---------- Drag ---------- */
-
   function startDrag(event) {
     if (!WINDOW_EL || !TITLEBAR) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
@@ -191,7 +178,7 @@
     WINDOW_EL.classList.add('is-dragging');
     BODY.classList.add('is-window-dragging');
 
-    try { TITLEBAR.setPointerCapture(event.pointerId); } catch { /* noop */ }
+    try { TITLEBAR.setPointerCapture(event.pointerId); } catch {}
     event.preventDefault();
   }
 
@@ -213,15 +200,13 @@
 
     if (TITLEBAR) {
       TITLEBAR.classList.remove('is-dragging');
-      try { TITLEBAR.releasePointerCapture(event.pointerId); } catch { /* noop */ }
+      try { TITLEBAR.releasePointerCapture(event.pointerId); } catch {}
     }
     if (WINDOW_EL) WINDOW_EL.classList.remove('is-dragging');
     BODY.classList.remove('is-window-dragging');
   }
 
-  /* ---------- Boot ---------- */
-
-    function init() {
+  function init() {
     const missing = [];
     if (!LAYER)     missing.push('#menu');
     if (!WINDOW_EL) missing.push('#cheatWindow');
@@ -242,7 +227,6 @@
       });
     }
 
-    /* Any element with [data-window-toggle] opens / closes the menu. */
     document.querySelectorAll('[data-window-toggle]').forEach((el) => {
       if (el === SHOW_MENU) return;
       el.addEventListener('click', toggle);

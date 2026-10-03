@@ -1,19 +1,3 @@
-/* ============================================================
-   window.css — Windows-style draggable window
-   ============================================================
-   Sections:
-   01. Tokens
-   02. Layer
-   03. Shell
-   04. Title bar
-   05. Controls
-   06. Body
-   07. States
-   08. Animation
-   09. Responsive
-   ============================================================ */
-
-/* ---------- 01. Tokens ---------- */
 :root {
   --window-titlebar-h: 42px;
   --window-ctl-w:      36px;
@@ -31,7 +15,6 @@
   --window-close-bg-h: #c50f1f;
 }
 
-/* ---------- 02. Layer ---------- */
 .window-layer {
   position: fixed;
   inset: 0;
@@ -42,7 +25,6 @@
 }
 .window-layer.is-open { display: block; }
 
-/* ---------- 03. Shell ---------- */
 .window {
   position: absolute;
   top: 50%;
@@ -75,7 +57,6 @@
   box-shadow: var(--shadow-lg), var(--glow-accent);
 }
 
-/* ---------- 04. Title bar ---------- */
 .window__titlebar {
   display: flex;
   align-items: center;
@@ -116,7 +97,6 @@
   text-overflow: ellipsis;
 }
 
-/* ---------- 05. Controls ---------- */
 .window__controls {
   display: flex;
   align-items: center;
@@ -148,7 +128,6 @@
 .window--maximized .window__btn--max .icon-max     { display: none; }
 .window--maximized .window__btn--max .icon-restore { display: block; }
 
-/* ---------- 06. Body ---------- */
 .window__body {
   flex: 1 1 auto;
   min-height: 0;
@@ -157,7 +136,6 @@
   overflow: hidden;
 }
 
-/* ---------- 07. States ---------- */
 .window__titlebar.is-dragging { cursor: grabbing; }
 
 .window.is-dragging {
@@ -179,7 +157,6 @@
 
 .window--minimized { display: none; }
 
-/* ---------- 08. Animation ---------- */
 @keyframes window-in {
   from { opacity: 0; scale: 0.96; }
   to   { opacity: 1; scale: 1; }
@@ -188,7 +165,6 @@
   animation: window-in 170ms cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 
-/* ---------- 09. Responsive ---------- */
 @media (max-width: 980px) {
   .window {
     width:  min(820px, calc(100vw - 1.5rem));

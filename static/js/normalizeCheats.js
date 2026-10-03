@@ -1,12 +1,3 @@
-/* ==========================================================
-   Sharkive / libretro normalizers — tuned to the actual file shapes
-   ========================================================== */
-
-/**
- * 3DS file:
- *   { "0004000000148500": { "99999 Tres Collected": ["...","..."], ... } }
- * Returns: [{ tid, cheats: [{ name, codes }] }, ...]
- */
 function normalize3DS(raw) {
   const out = [];
   for (const [tid, cheats] of Object.entries(raw)) {
@@ -23,14 +14,6 @@ function normalize3DS(raw) {
   return out;
 }
 
-/**
- * Switch file:
- *   { "010099B00A2DC000": { "<buildId>": { "P1 Infinite Lives": ["..."], ... } } }
- *
- * Flattens the buildId layer. Cheats with the same name across builds are
- * deduped (first build wins) so the same cheat doesn't appear N times.
- * Returns: [{ tid, cheats: [{ name, codes, buildId }] }, ...]
- */
 function normalizeSwitch(raw) {
   const out = [];
   if (!raw || typeof raw !== 'object') return out;
@@ -38,15 +21,11 @@ function normalizeSwitch(raw) {
   for (const [tid, builds] of Object.entries(raw)) {
     if (!builds || typeof builds !== 'object') continue;
 
-    const seen = new Map(); // cheatName -> { name, codes, buildId }
+    const seen = new Map();
 
     for (const [buildId, cheats] of Object.entries(builds)) {
       if (!cheats) continue;
 
-      /* -------------------------------------------------
-         Case A: array of { title, source }  (blawar/titledb)
-         Case B: object map { "Name": ["code", ...] }  (Sharkive)
-         ------------------------------------------------- */
       const entries = Array.isArray(cheats)
         ? cheats.map((c) => ({
             name:   c && (c.title || c.name),
@@ -84,26 +63,12 @@ function normalizeSwitch(raw) {
   return out;
 }
 
-/* ----------------------------------------------------------
-   GBA helpers
-   ---------------------------------------------------------- */
-
-/**
- * libretro GBA cheat entries store their code as a single string with
- * parts joined by `+`, e.g.:
- *   "8201A454+07B7"            -> one line:  "8201A454 07B7"
- *   "000084F5+000A+100193C0+0007" -> two lines:
- *                                     "000084F5 000A"
- *                                     "100193C0 0007"
- * Some entries ship with stray wrapping quotes — strip those too.
- */
 function formatGbaCode(code) {
   if (typeof code !== 'string') return [];
 
   const s = code.trim().replace(/^["'\s]+|["'\s]+$/g, '');
   if (!s) return [];
 
-  // No `+` -> single-token code (rare, e.g. GameShark "54EA36996E4A")
   if (!s.includes('+')) return [s];
 
   const parts = s.split('+').map((p) => p.trim()).filter(Boolean);
@@ -116,24 +81,6 @@ function formatGbaCode(code) {
   return lines;
 }
 
-/**
- * GBA file (RetroArch / libretro-database shape):
- *   {
- *     "platform": "gba",
- *     "source":   "...",
- *     "gameCount": 512,
- *     "games": {
- *       "007 - Everything or Nothing (World) (Code Breaker)": [
- *         { "desc": "Infinite Health", "code": "3200E924+0096", "parts": [...] },
- *         ...
- *       ],
- *       ...
- *     }
- *   }
- *
- * The bare map form `{ "Game": [ {...} ] }` is also accepted.
- * Returns: [{ tid, cheats: [{ name, codes }] }, ...]
- */
 function normalizeGBA(raw) {
   const out = [];
   if (!raw || typeof raw !== 'object') return out;

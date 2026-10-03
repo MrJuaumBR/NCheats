@@ -1,23 +1,5 @@
-/* ============================================================
-   Nintendo Cheats — 3DS, Switch & GBA
-   script.js
-   ============================================================
-   TABLE OF CONTENTS
-   01. Config
-   02. Utilities
-   03. Theme manager
-   04. Library (cheats + titles union, multi-source)
-   05. NLib (Switch metadata enrichment)
-   06. Tabs & search UI
-   07. Boot
-   ============================================================ */
-
 (function () {
   'use strict';
-
-  /* ==========================================================
-     01. CONFIG
-     ========================================================== */
 
   const LIBRARIES = {
     'switch': {
@@ -50,11 +32,9 @@
     'gba': {
       label: 'GBA',
       platform: 'gba',
-      /* GBA FIX: point at the local file first. */
       cheatsUrls: [
         'static/data/gba.json'
       ],
-      /* GBA has no external title metadata — names come from the cheat file. */
       titleSources: [],
       normalize: normalizeGBA,
       searchId:  'searchGba',
@@ -67,11 +47,6 @@
 
   const BODY         = document.body;
   const THEME_SWITCH = document.getElementById('themeSwitch');
-
-
-  /* ==========================================================
-     02. UTILITIES
-     ========================================================== */
 
   const escapeHtml = (s) =>
     String(s).replace(/[&<>"']/g, (c) =>
@@ -102,26 +77,20 @@
       return `https://www.nintendo.com/search/?q=${q}`;
     }
 
-    // GBA — no Nintendo link at all.
     return '';
   }
-
-
-  /* ==========================================================
-     03. THEME MANAGER
-     ========================================================== */
 
   function themeApply(theme, persist = true) {
     if (!theme) return;
     BODY.setAttribute('data-theme', theme);
     if (persist) {
-      try { localStorage.setItem('theme', theme); } catch { /* noop */ }
+      try { localStorage.setItem('theme', theme); } catch {}
     }
   }
 
   function themeInit() {
     let stored = null;
-    try { stored = localStorage.getItem('theme'); } catch { /* noop */ }
+    try { stored = localStorage.getItem('theme'); } catch {}
 
     if (stored === 'light' || stored === 'dark') {
       themeApply(stored, false);
@@ -138,11 +107,6 @@
       themeApply(THEME_SWITCH.checked ? 'dark' : 'light');
     });
   }
-
-
-  /* ==========================================================
-     04. LIBRARY
-     ========================================================== */
 
   const libraries = {};
 
@@ -293,8 +257,6 @@
 
         const allTids = new Set([...cheatsMap.keys(), ...titlesMap.keys()]);
 
-        /* GBA FIX: GBA "tids" are game names, so fall back to the tid itself
-           instead of "Unknown (...)". */
         const isGba = cfg.platform === 'gba';
 
         lib.games = [...allTids].map((tid) => {
@@ -360,11 +322,6 @@
     }
     return results;
   }
-
-
-  /* ==========================================================
-     05. NLIB
-     ========================================================== */
 
   const NLIB = {
     base: 'https://api.nlib.cc',
@@ -436,12 +393,6 @@
                  onerror="this.style.display='none'">`;
   }
 
-
-  /* ==========================================================
-     06. TABS & SEARCH UI
-     ========================================================== */
-
-  /* GBA FIX: added gba entry so typing in its search box doesn't throw. */
   const tabState = {
     switch: { view: 'idle', query: '', results: [], selected: null },
     '3ds':  { view: 'idle', query: '', results: [], selected: null },
@@ -465,7 +416,6 @@
       panel.hidden = !on;
     });
 
-    /* GBA FIX: lazily load whichever library this tab belongs to. */
     if (libraries[tabName] && libraries[tabName].state === 'idle') {
       loadLibrary(tabName);
     }
@@ -589,9 +539,6 @@
     }, 1500);
   }
 
-
-  /* ---------- Rendering ---------- */
-
   function renderLibrary(key) {
     const cfg = LIBRARIES[key];
     const lib = libraries[key];
@@ -602,7 +549,6 @@
 
     if (st.view === 'detail' && st.selected) {
       container.innerHTML = renderDetail(st.selected, cfg.platform);
-      /* Only Switch / 3DS use the NLib fallback card. */
       if (cfg.platform !== 'gba' && st.selected.name.startsWith('Unknown (')) {
         hydrateNlibCard(container, cfg.platform, st.selected.tid);
       }
@@ -659,7 +605,6 @@
     const count = Array.isArray(game.cheats) ? game.cheats.length : 0;
     const hasCheats = count > 0;
 
-    /* GBA FIX: don't repeat the name as a "title id". */
     const showTid = game.tid && game.tid !== game.name;
 
     const metaParts = [];
@@ -780,11 +725,6 @@
       </div>`;
   }
 
-
-  /* ==========================================================
-     NLIB — hydrate fallback card
-     ========================================================== */
-
   function hydrateNlibCard(container, platform, tid) {
     const card = container.querySelector('.nlib-card[data-meta-tid]');
     if (!card) return;
@@ -882,11 +822,6 @@
       </div>`;
   }
 
-
-  /* ==========================================================
-     07. BOOT
-     ========================================================== */
-
   function init() {
     themeInit();
 
@@ -897,7 +832,6 @@
     bindTabKeyboard();
     bindSearchInput('switch');
     bindSearchInput('3ds');
-    /* GBA FIX: wire up the GBA search box too. */
     bindSearchInput('gba');
 
     activateTab('switch');
