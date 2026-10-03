@@ -1,0 +1,219 @@
+/* ============================================================
+   window.css — Windows-style draggable window
+   ============================================================
+   Sections:
+   01. Tokens
+   02. Layer
+   03. Shell
+   04. Title bar
+   05. Controls
+   06. Body
+   07. States
+   08. Animation
+   09. Responsive
+   ============================================================ */
+
+/* ---------- 01. Tokens ---------- */
+:root {
+  --window-titlebar-h: 42px;
+  --window-ctl-w:      36px;
+  --window-ctl-h:      28px;
+  --window-close-bg:   #e81123;
+  --window-close-bg-h: #f1707a;
+  --window-z:          1050;
+  --window-w:          880px;
+  --window-h:          760px;
+  --window-gap:        1.5rem;
+}
+
+[data-theme="dark"] {
+  --window-close-bg:   #e81123;
+  --window-close-bg-h: #c50f1f;
+}
+
+/* ---------- 02. Layer ---------- */
+.window-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--window-z);
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+}
+.window-layer.is-open { display: block; }
+
+/* ---------- 03. Shell ---------- */
+.window {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+
+  width:  min(var(--window-w), calc(100vw - var(--window-gap)));
+  height: min(var(--window-h), calc(100dvh - var(--window-gap)));
+  max-height: calc(100dvh - var(--window-gap));
+
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  overflow: hidden;
+  pointer-events: auto;
+
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.window.is-positioned { transform: none; }
+
+.window:focus { outline: none; }
+.window:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-lg), var(--glow-accent);
+}
+
+/* ---------- 04. Title bar ---------- */
+.window__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  flex: 0 0 auto;
+  min-height: var(--window-titlebar-h);
+  padding: 0 0.5rem 0 1rem;
+
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--surface) 92%, var(--text) 8%),
+    var(--surface)
+  );
+  border-bottom: 1px solid var(--border);
+
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.window__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.window__title > svg { flex: 0 0 auto; color: var(--accent); }
+.window__title > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------- 05. Controls ---------- */
+.window__controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.window__btn {
+  display: grid;
+  place-items: center;
+  width: var(--window-ctl-w);
+  height: var(--window-ctl-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition);
+}
+.window__btn:hover { background: var(--surface-2); color: var(--text); }
+.window__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.window__btn--close:hover { background: var(--window-close-bg); color: #fff; }
+
+.window__btn--max .icon-restore { display: none; }
+.window--maximized .window__btn--max .icon-max     { display: none; }
+.window--maximized .window__btn--max .icon-restore { display: block; }
+
+/* ---------- 06. Body ---------- */
+.window__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- 07. States ---------- */
+.window__titlebar.is-dragging { cursor: grabbing; }
+
+.window.is-dragging {
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--accent);
+  transition: none;
+}
+.window.is-dragging .window__body { pointer-events: none; }
+
+.window--maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0;
+  border-width: 0;
+}
+.window--maximized .window__titlebar { cursor: default; }
+
+.window--minimized { display: none; }
+
+/* ---------- 08. Animation ---------- */
+@keyframes window-in {
+  from { opacity: 0; scale: 0.96; }
+  to   { opacity: 1; scale: 1; }
+}
+.window-layer.is-open .window {
+  animation: window-in 170ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* ---------- 09. Responsive ---------- */
+@media (max-width: 980px) {
+  .window {
+    width:  min(820px, calc(100vw - 1.5rem));
+    height: min(700px, calc(100dvh - 1.5rem));
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --window-titlebar-h: 44px;
+    --window-ctl-w:      38px;
+    --window-ctl-h:      30px;
+    --window-gap:        0.75rem;
+  }
+
+  .window {
+    width:  calc(100vw - var(--window-gap));
+    height: calc(100dvh - var(--window-gap));
+    max-height: calc(100dvh - var(--window-gap));
+    border-radius: var(--radius);
+  }
+
+  .window--maximized { border-radius: 0; }
+}
+
+@media (max-width: 380px) {
+  .window__title span { font-size: 0.8rem; }
+}

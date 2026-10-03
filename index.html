@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0e13" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f7" media="(prefers-color-scheme: light)" />
+    <title>Nintendo Cheats — 3DS, Switch &amp; GBA</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="static/css/window.css" />
+  </head>
+  <body data-theme="dark">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Nintendo Cheats — 3DS, Switch &amp; GBA</a>
+        <div class="d-flex align-items-center gap-3 order-lg-last">
+          <div class="form-check form-switch theme-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch"
+                id="themeSwitch" aria-label="Toggle dark mode">
+            <label class="form-check-label" for="themeSwitch" title="Toggle theme">
+              <svg class="theme-switch__icon theme-switch__icon--sun"
+                  width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  aria-hidden="true">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41
+                        M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+              <svg class="theme-switch__icon theme-switch__icon--moon"
+                  width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </label>
+          </div>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <span class="nav-link btn" id="showMenu" role="button" tabindex="0"
+                      aria-controls="menu" aria-expanded="false">Show Menu</span>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#about">About</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div>
+        <h1>3DS, Switch &amp; GBA Cheats</h1>
+        <p>A collection of cheats for Nintendo 3DS, Nintendo Switch and Game Boy Advance.</p>
+        <div class="card">
+          <div class="card-body">
+            <h3>Getting Started</h3>
+            <p>Here's how to get started with using the cheats:</p>
+            <ol>
+              <li>Pick the <strong>Switch</strong>, <strong>3DS</strong> or <strong>GBA</strong> tab.</li>
+              <li>Start typing a game name (or a 16-character title ID on Switch/3DS).</li>
+              <li>The library loads once and caches in memory for instant search.</li>
+              <li>Click a game to see every available cheat.</li>
+              <li>Hit <em>Copy</em> to grab a cheat code block.</li>
+            </ol>
+
+            <!-- Opens the same draggable cheats window as the navbar "Show Menu" -->
+            <button type="button" class="btn btn--primary open-menu-cta" data-window-toggle>
+              <i class="fa-solid fa-gamepad" aria-hidden="true"></i>
+              <span>Open the Cheats Menu</span>
+            </button>
+          </div>
+        </div>
+        <hr>
+        <div class="card">
+          <div class="card-body">
+            <h3>Thanks to:</h3>
+            <ul>
+              <li><a href="https://github.com/FlagBrew/Sharkive">Sharkive</a> — 3DS &amp; Switch cheat code database</li>
+              <li><a href="https://www.libretro.com/">RetroArch / libretro-database</a> — GBA cheat codes (community-aggregated)</li>
+              <li><a href="https://api.nlib.cc/">NLib API</a> — game metadata</li>
+              <li><a href="https://github.com/ghost-land/3dsdb">3DSDB</a> — game metadata</li>
+              <li><a href="https://github.com/MrJuaumBR">MrJuaumBR</a> — contributor &amp; maintainer</li>
+            </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         Draggable window (Windows-style) with tabbed content
+         ============================================================ -->
+    <div class="window-layer" id="menu" aria-hidden="true">
+      <section class="window" id="cheatWindow" role="dialog"
+               aria-labelledby="windowTitle" aria-modal="false" tabindex="-1">
+
+        <!-- Title bar -->
+        <header class="window__titlebar" id="windowTitlebar">
+          <div class="window__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="11" rx="3.5"/>
+              <path d="M7 11v3M5.5 12.5h3M16.5 11.5h.01M18.5 13.5h.01"/>
+            </svg>
+            <span id="windowTitle">Cheats — 3DS, Switch &amp; GBA</span>
+          </div>
+
+          <div class="window__controls">
+            <button type="button" class="window__btn"
+                    data-window-action="minimize" title="Minimize" aria-label="Minimize">
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                <path d="M0 5h10" fill="none" stroke="currentColor"/>
+              </svg>
+            </button>
+
+            <button type="button" class="window__btn window__btn--max"
+                    data-window-action="maximize" title="Maximize" aria-label="Maximize">
+              <svg class="icon-max" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                <rect x="0.5" y="0.5" width="9" height="9" rx="1.5"
+                      fill="none" stroke="currentColor"/>
+              </svg>
+              <svg class="icon-restore" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                <path d="M2.5 2.5V1.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-1"
+                      fill="none" stroke="currentColor"/>
+                <rect x="0.5" y="2.5" width="7" height="7" rx="1"
+                      fill="none" stroke="currentColor"/>
+              </svg>
+            </button>
+
+            <button type="button" class="window__btn window__btn--close"
+                    data-window-action="close" title="Close" aria-label="Close">
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                <path d="M0 0l10 10M10 0L0 10" fill="none" stroke="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- Body: tabs + panels -->
+        <div class="window__body">
+
+          <!-- Tab strip -->
+          <nav class="win-tabs" role="tablist" aria-label="Cheat sources">
+            <button type="button" role="tab" id="tab-switch"
+                    class="win-tab is-active" data-tab="switch"
+                    aria-selected="true" aria-controls="panel-switch">
+              <i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i>
+              <span>Switch</span>
+            </button>
+            <button type="button" role="tab" id="tab-3ds"
+                    class="win-tab" data-tab="3ds"
+                    aria-selected="false" aria-controls="panel-3ds" tabindex="-1">
+              <i class="fa-solid fa-gamepad" aria-hidden="true"></i>
+              <span>3DS</span>
+            </button>
+            <button type="button" role="tab" id="tab-gba"
+                    class="win-tab" data-tab="gba"
+                    aria-selected="false" aria-controls="panel-gba" tabindex="-1">
+              <i class="fa-solid fa-gamepad" aria-hidden="true"></i>
+              <span>GBA</span>
+            </button>
+            <button type="button" role="tab" id="tab-about"
+                    class="win-tab" data-tab="about"
+                    aria-selected="false" aria-controls="panel-about" tabindex="-1">
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              <span>About</span>
+            </button>
+          </nav>
+
+          <!-- Scrollable panel area -->
+          <div class="win-panels">
+
+            <!-- ============ SWITCH ============ -->
+            <section class="win-panel is-active" id="panel-switch"
+                     role="tabpanel" aria-labelledby="tab-switch" data-panel="switch">
+              <div class="win-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" id="switchSearch"
+                       placeholder="Search games or title IDs…"
+                       autocomplete="off" spellcheck="false"
+                       aria-label="Search Switch cheats">
+                <button type="button" class="win-search__clear"
+                        data-clear="switch" hidden aria-label="Clear search">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="win-results" id="switchResults"></div>
+            </section>
+
+            <!-- ============ 3DS ============ -->
+            <section class="win-panel" id="panel-3ds"
+                     role="tabpanel" aria-labelledby="tab-3ds"
+                     data-panel="3ds" hidden>
+              <div class="win-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" id="search3ds"
+                       placeholder="Search games or title IDs…"
+                       autocomplete="off" spellcheck="false"
+                       aria-label="Search 3DS cheats">
+                <button type="button" class="win-search__clear"
+                        data-clear="3ds" hidden aria-label="Clear search">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="win-results" id="results3ds"></div>
+            </section>
+
+            <!-- =========== GBA ============ -->
+            <section class="win-panel" id="panel-gba" role="tabpanel"
+                     aria-labelledby="tab-gba" data-panel="gba" hidden>
+              <div class="win-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" id="searchGba"
+                       placeholder="Search GBA games…"
+                       autocomplete="off" spellcheck="false"
+                       aria-label="Search GBA cheats">
+                <button type="button" class="win-search__clear"
+                        data-clear="gba" hidden aria-label="Clear search">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="win-results" id="resultsGba"></div>
+            </section>
+
+            <!-- ============ ABOUT ============ -->
+            <section class="win-panel" id="panel-about"
+                     role="tabpanel" aria-labelledby="tab-about"
+                     data-panel="about" hidden>
+
+              <h2 class="about__title">About this tool</h2>
+              <p class="about__lead">
+                A small, distraction-free browser for cheat codes on
+                <strong>Nintendo&nbsp;3DS</strong>,
+                <strong>Nintendo&nbsp;Switch</strong> and
+                <strong>Game&nbsp;Boy&nbsp;Advance</strong>. Everything runs in
+                your browser — no tracking, no accounts.
+              </p>
+
+              <article class="about-card">
+                <span class="about-card__icon about-card__icon--cheats">
+                  <i class="fa-solid fa-scroll" aria-hidden="true"></i>
+                </span>
+                <div class="about-card__body">
+                  <h3>Cheat codes — Sharkive &amp; libretro-database</h3>
+                  <p>
+                    <strong>Switch</strong> and <strong>3DS</strong> cheat codes
+                    are pulled live from the <strong>Sharkive</strong> release
+                    database, maintained by FlagBrew. <strong>GBA</strong> cheat
+                    codes come from the community-aggregated
+                    <strong>RetroArch / libretro-database</strong> cheats file.
+                  </p>
+                  <a class="about-card__link" target="_blank" rel="noopener"
+                     href="https://github.com/FlagBrew/Sharkive">
+                    github.com/FlagBrew/Sharkive
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </article>
+
+              <article class="about-card">
+                <span class="about-card__icon about-card__icon--nlib">
+                  <i class="fa-solid fa-database" aria-hidden="true"></i>
+                </span>
+                <div class="about-card__body">
+                  <h3>Game data — NLib &amp; 3DSDB</h3>
+                  <p>
+                    Switch &amp; 3DS title metadata (covers, publishers, release
+                    info) is looked up through the free <strong>NLib</strong> API,
+                    with <strong>3DSDB</strong> as a fallback for 3DS titles not
+                    yet indexed by NLib. GBA titles are indexed directly by their
+                    in-game names.
+                  </p>
+                  <a class="about-card__link" target="_blank" rel="noopener"
+                     href="https://api.nlib.cc/">
+                    api.nlib.cc
+                    <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </article>
+
+              <article class="about-card">
+                <span class="about-card__icon about-card__icon--how">
+                  <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                </span>
+                <div class="about-card__body">
+                  <h3>How it works</h3>
+                  <ol class="about-list">
+                    <li>Pick the <strong>Switch</strong>, <strong>3DS</strong> or <strong>GBA</strong> tab.</li>
+                    <li>Start typing a game name (or a 16-character title ID on Switch/3DS).</li>
+                    <li>The library loads once and caches in memory for instant search.</li>
+                    <li>Click a game to see every available cheat.</li>
+                    <li>Hit <em>Copy</em> to grab a cheat code block.</li>
+                  </ol>
+                </div>
+              </article>
+
+              <article class="about-card">
+                <span class="about-card__icon about-card__icon--warn">
+                  <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                </span>
+                <div class="about-card__body">
+                  <h3>Disclaimer</h3>
+                  <p>
+                    This site is not affiliated with Nintendo. Cheat codes are
+                    provided as-is for use with modded consoles or emulators. Use
+                    at your own risk — always back up your save data.
+                  </p>
+                </div>
+              </article>
+
+              <p class="about__credits">thanks to every contributor of Sharkive, libretro-database, NLib and 3DSDB.</p>
+            </section>
+
+          </div><!-- /.win-panels -->
+        </div><!-- /.window__body -->
+      </section>
+    </div>
+
+    <div class="footer">
+      <div class="container">
+        <p>&copy; 2026 Nintendo Cheats. All rights reserved.</p>
+        <small>Thanks to
+          <a href="https://github.com/FlagBrew/Sharkive">Sharkive</a>,
+          <a href="https://www.libretro.com/">libretro-database</a>,
+          <a href="https://api.nlib.cc/">NLib API</a> &amp;
+          <a href="https://github.com/ghost-land/3dsdb">3DSDB</a>
+        </small>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"
+  ></script>
+  <script src="static/js/normalizeCheats.js"></script>
+  <script src="static/js/window.js"></script>
+  <script src="static/js/script.js"></script>
+</html>
