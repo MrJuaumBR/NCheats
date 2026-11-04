@@ -54,6 +54,8 @@ function normalizeSwitch(raw) {
         while (codes.length && codes[0].trim() === '') codes.shift();
         while (codes.length && codes[codes.length - 1].trim() === '') codes.pop();
 
+        if (!codes.length || !codes.some((line) => String(line).trim())) continue;
+
         seen.set(name, { name, codes, buildId });
       }
     }
@@ -113,4 +115,8 @@ function normalizeGBA(raw) {
   }
 
   return out;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { normalize3DS, normalizeGBA, normalizeSwitch };
 }

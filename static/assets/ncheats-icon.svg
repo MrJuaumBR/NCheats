@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">NCheats icon</title>
+  <desc id="desc">A dark rounded square with a custom cyan and violet gamepad mark framed by code brackets.</desc>
+  <defs>
+    <linearGradient id="bg" x1="12" y1="8" x2="116" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20283a"/>
+      <stop offset="1" stop-color="#10131d"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="31" y1="30" x2="94" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#42d9ed"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="118" height="118" rx="30" fill="url(#bg)"/>
+  <rect x="5.75" y="5.75" width="116.5" height="116.5" rx="29.25" stroke="#71809c" stroke-opacity=".38" stroke-width="1.5"/>
+  <path d="M39 39H29v50h10M89 39h10v50H89" fill="none" stroke="url(#mark)" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  <path d="M51 56v24m-12-12h24" stroke="#f3f6ff" stroke-linecap="round" stroke-width="6"/>
+  <circle cx="82" cy="59" r="4.5" fill="#42d9ed"/>
+  <circle cx="94" cy="71" r="4.5" fill="#a78bfa"/>
+  <path d="M70 91h30" stroke="#42d9ed" stroke-linecap="round" stroke-opacity=".86" stroke-width="4"/>
+</svg>

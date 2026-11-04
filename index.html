@@ -7,6 +7,28 @@
     <meta name="theme-color" content="#0c0e13" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f2f3f7" media="(prefers-color-scheme: light)" />
     <title>Nintendo Cheats — 3DS, Switch &amp; GBA</title>
+    <meta name="description" content="Browse Nintendo Switch, 3DS and Game Boy Advance cheat codes, or use the public NCheats JSON API." />
+    <link rel="icon" href="static/assets/ncheats-icon.svg" type="image/svg+xml" />
+    <script>
+      (() => {
+        const skins = ['default', 'cyberpunk', 'discord', 'solo-leveling', 'xbox-360', 'windows-xp'];
+        const modes = ['dark', 'light'];
+        const palettes = ['a', 'b', 'c', 'd'];
+        const valid = (value, options, fallback) => options.includes(value) ? value : fallback;
+        try {
+          const saved = JSON.parse(localStorage.getItem('ncheats:appearance') || '{}');
+          let legacyMode = '';
+          try { legacyMode = localStorage.getItem('theme') || ''; } catch {}
+          document.documentElement.dataset.skin = valid(saved.skin, skins, 'default');
+          document.documentElement.dataset.mode = valid(saved.mode, modes, valid(legacyMode, modes, 'dark'));
+          document.documentElement.dataset.palette = valid(saved.palette, palettes, 'a');
+        } catch {
+          document.documentElement.dataset.skin = 'default';
+          document.documentElement.dataset.mode = 'dark';
+          document.documentElement.dataset.palette = 'a';
+        }
+      })();
+    </script>
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -17,35 +39,52 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha384-blOohCVdhjmtROpu8+CfTnUWham9nkX7P7OZQMst+RUnhtoY/9qemFAkIKOYxDI3"
+      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="static/css/style.css" />
     <link rel="stylesheet" href="static/css/window.css" />
+    <link rel="stylesheet" href="static/css/ecosystem.css" />
   </head>
-  <body data-theme="dark">
+  <body class="skin-default theme-dark palette-a" data-theme="dark">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Nintendo Cheats — 3DS, Switch &amp; GBA</a>
+        <a class="navbar-brand" href="./" aria-label="NCheats home">
+          <img src="static/assets/ncheats-icon.svg" alt="" width="36" height="36" />
+          <span class="navbar-brand__long">Nintendo Cheats — 3DS, Switch &amp; GBA</span>
+          <span class="navbar-brand__short">NCheats</span>
+        </a>
         <div class="d-flex align-items-center gap-3 order-lg-last">
-          <div class="form-check form-switch theme-switch mb-0">
-            <input class="form-check-input" type="checkbox" role="switch"
-                id="themeSwitch" aria-label="Toggle dark mode">
-            <label class="form-check-label" for="themeSwitch" title="Toggle theme">
-              <svg class="theme-switch__icon theme-switch__icon--sun"
-                  width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  aria-hidden="true">
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41
-                        M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-              </svg>
-              <svg class="theme-switch__icon theme-switch__icon--moon"
-                  width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            </label>
-          </div>
+          <details class="appearance-menu" id="appearanceMenu">
+            <summary aria-label="Appearance settings"><i class="fa-solid fa-palette" aria-hidden="true"></i><span>Appearance</span></summary>
+            <div class="appearance-menu__panel" aria-label="Appearance settings">
+              <label for="skinSelect">Skin</label>
+              <select id="skinSelect" name="skin">
+                <option value="default">Default / Ecosystem</option>
+                <option value="cyberpunk">Cyberpunk / Night City</option>
+                <option value="discord">Discord / Community</option>
+                <option value="solo-leveling">Solo Leveling / Shadow Monarch</option>
+                <option value="xbox-360">Xbox 360 / Blades and NXE</option>
+                <option value="windows-xp">Windows XP / Classic Luna</option>
+              </select>
+              <fieldset class="appearance-menu__group">
+                <legend>Appearance mode</legend>
+                <div class="appearance-mode">
+                  <label><input type="radio" name="themeMode" value="dark" /><span>Dark</span></label>
+                  <label><input type="radio" name="themeMode" value="light" /><span>Light</span></label>
+                </div>
+              </fieldset>
+              <fieldset class="appearance-menu__group">
+                <legend>Accent palette</legend>
+                <div class="palette-options">
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="a" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Amethyst</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="b" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Rose</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="c" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Graphite</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="d" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Lagoon</span></label>
+                </div>
+              </fieldset>
+            </div>
+          </details>
           <button
             class="navbar-toggler"
             type="button"
@@ -62,11 +101,11 @@
                 <a class="nav-link" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <span class="nav-link btn" id="showMenu" role="button" tabindex="0"
-                      aria-controls="menu" aria-expanded="false">Show Menu</span>
+                <button class="nav-link btn" id="showMenu" type="button" data-window-toggle
+                        aria-controls="menu" aria-expanded="false">Open cheat library</button>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#about">About</a>
+                <a class="nav-link" href="#api">JSON API</a>
               </li>
             </ul>
           </div>
@@ -74,10 +113,20 @@
       </div>
     </nav>
 
-    <div class="container">
+    <main class="container" id="main-content">
       <div>
-        <h1>3DS, Switch &amp; GBA Cheats</h1>
-        <p>A collection of cheats for Nintendo 3DS, Nintendo Switch and Game Boy Advance.</p>
+        <section class="site-hero" aria-labelledby="pageTitle">
+          <p class="site-hero__eyebrow">NCheats · Community cheat library</p>
+          <h1 id="pageTitle">Cheat codes for the games you play.</h1>
+          <p>Search Nintendo Switch, Nintendo 3DS and Game Boy Advance codes in one place, or consume the same bundled data through the public JSON API.</p>
+          <div class="site-hero__actions">
+            <button type="button" class="btn btn--primary" data-window-toggle
+                    aria-controls="menu" aria-expanded="false">
+              <i class="fa-solid fa-gamepad" aria-hidden="true"></i><span>Browse cheat library</span>
+            </button>
+            <a class="btn btn--ghost" href="#api"><i class="fa-solid fa-code" aria-hidden="true"></i><span>Explore the JSON API</span></a>
+          </div>
+        </section>
 
         <!-- Featured: our own 3DS homebrew game -->
         <section class="promo-card" aria-labelledby="promoTitle">
@@ -93,7 +142,7 @@
             </p>
             <a class="btn btn--primary"
                href="https://github.com/MrJuaumBR/AbyssalEclipse3DS"
-               target="_blank" rel="noopener">
+               target="_blank" rel="noopener noreferrer">
               <i class="fa-brands fa-github" aria-hidden="true"></i>
               <span>Get Abyssal Eclipse</span>
             </a>
@@ -112,13 +161,32 @@
               <li>Hit <em>Copy</em> to grab a cheat code block.</li>
             </ol>
 
-            <!-- Opens the same draggable cheats window as the navbar "Show Menu" -->
-            <button type="button" class="btn btn--primary open-menu-cta" data-window-toggle>
+            <!-- Opens the same draggable cheats window as the navigation control. -->
+            <button type="button" class="btn btn--primary open-menu-cta" data-window-toggle
+                    aria-controls="menu" aria-expanded="false">
               <i class="fa-solid fa-gamepad" aria-hidden="true"></i>
               <span>Open the Cheats Menu</span>
             </button>
           </div>
         </div>
+        <section class="api-section" id="api" aria-labelledby="apiTitle">
+          <p class="site-hero__eyebrow">For developers</p>
+          <h2 id="apiTitle">NCheats JSON API</h2>
+          <p class="api-section__intro">Use the versioned, read-only JSON snapshots to get every bundled cheat record. No key or account is needed.</p>
+          <div class="api-endpoints" aria-label="JSON API endpoints">
+            <div class="api-endpoint"><a href="api/v1/cheats.json">All platforms · cheats.json</a><p>One response with every Switch, 3DS and GBA game and cheat.</p></div>
+            <div class="api-endpoint"><a href="api/v1/platforms/switch.json">Nintendo Switch</a><p>Switch titles, metadata and cheat codes.</p></div>
+            <div class="api-endpoint"><a href="api/v1/platforms/3ds.json">Nintendo 3DS</a><p>3DS titles, metadata and cheat codes.</p></div>
+            <div class="api-endpoint"><a href="api/v1/platforms/gba.json">Game Boy Advance</a><p>GBA titles and cheat codes.</p></div>
+            <div class="api-endpoint"><a href="api/v1/index.json">API index</a><p>Version, record counts and endpoint URLs.</p></div>
+            <div class="api-endpoint"><a href="api/v1/openapi.json">OpenAPI spec</a><p>OpenAPI 3.1 endpoint description.</p></div>
+          </div>
+          <pre class="api-code"><code>fetch('https://mrjuaumbr.github.io/NCheats/api/v1/platforms/switch.json')
+  .then((response) =&gt; response.json())
+  .then((data) =&gt; console.log(data.games));</code></pre>
+          <p class="api-notice">GitHub Pages serves static files: this API is read-only and does not process filters, searches or query parameters on the server. Download the relevant JSON file and filter its <code>games</code> array in your app. Data is a snapshot; it changes when the repository’s datasets are refreshed.</p>
+          <p>Read the <a href="api/">API reference and response examples</a> for endpoint details and attribution.</p>
+        </section>
         <hr>
         <div class="card">
           <div class="card-body">
@@ -133,7 +201,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- ============================================================
          Draggable window (Windows-style) with tabbed content
@@ -290,15 +358,16 @@
                   <i class="fa-solid fa-scroll" aria-hidden="true"></i>
                 </span>
                 <div class="about-card__body">
-                  <h3>Cheat codes — Sharkive &amp; libretro-database</h3>
+                  <h3>Cheat codes — Sharkive, titledb &amp; libretro-database</h3>
                   <p>
-                    <strong>Switch</strong> and <strong>3DS</strong> cheat codes
-                    are pulled live from the <strong>Sharkive</strong> release
-                    database, maintained by FlagBrew. <strong>GBA</strong> cheat
-                    codes come from the community-aggregated
+                    The versioned JSON snapshots include <strong>Switch</strong>
+                    codes from FlagBrew / Sharkive and blawar / titledb,
+                    <strong>3DS</strong> codes from FlagBrew / Sharkive, and
+                    <strong>GBA</strong> codes from the community-aggregated
                     <strong>RetroArch / libretro-database</strong> cheats file.
+                    The library and public API use the same checked-in cheat-data snapshot.
                   </p>
-                  <a class="about-card__link" target="_blank" rel="noopener"
+                  <a class="about-card__link" target="_blank" rel="noopener noreferrer"
                      href="https://github.com/FlagBrew/Sharkive">
                     github.com/FlagBrew/Sharkive
                     <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
@@ -311,15 +380,16 @@
                   <i class="fa-solid fa-database" aria-hidden="true"></i>
                 </span>
                 <div class="about-card__body">
-                  <h3>Game data — NLib &amp; 3DSDB</h3>
+                  <h3>Game data — bundled title metadata</h3>
                   <p>
-                    Switch &amp; 3DS title metadata (covers, publishers, release
-                    info) is looked up through the free <strong>NLib</strong> API,
-                    with <strong>3DSDB</strong> as a fallback for 3DS titles not
-                    yet indexed by NLib. GBA titles are indexed directly by their
-                    in-game names.
+                    Available Switch and 3DS title names and publisher details are
+                    Included Switch and 3DS title names and publisher details are
+                    available in each JSON snapshot. Source metadata comes from
+                    <strong>NLib</strong> and <strong>3DSDB</strong>; GBA titles
+                    use the names in their source dataset. Searching the library
+                    does not send a request to a metadata service.
                   </p>
-                  <a class="about-card__link" target="_blank" rel="noopener"
+                  <a class="about-card__link" target="_blank" rel="noopener noreferrer"
                      href="https://api.nlib.cc/">
                     api.nlib.cc
                     <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
@@ -362,27 +432,34 @@
 
           </div><!-- /.win-panels -->
         </div><!-- /.window__body -->
+        <button type="button" class="window__resize" aria-label="Resize cheats window"
+                aria-describedby="resizeInstructions" title="Drag to resize; use arrow keys">
+          <span aria-hidden="true"></span>
+        </button>
+        <span class="visually-hidden" id="resizeInstructions">Drag the corner to resize, or focus it and use the arrow keys.</span>
       </section>
     </div>
 
     <div class="footer">
       <div class="container">
-        <p>&copy; 2026 Nintendo Cheats. All rights reserved.</p>
+        <p>&copy; 2026 NCheats. <a href="/">Back to MrJuaumBR’s portfolio</a></p>
         <small>Thanks to
           <a href="https://github.com/FlagBrew/Sharkive">Sharkive</a>,
           <a href="https://www.libretro.com/">libretro-database</a>,
           <a href="https://api.nlib.cc/">NLib API</a> &amp;
-          <a href="https://github.com/ghost-land/3dsdb">3DSDB</a>
+          <a href="https://github.com/ghost-land/3dsdb">3DSDB</a> ·
+          <a href="api/">JSON API documentation</a>
         </small>
       </div>
     </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="static/js/theme.js"></script>
+    <script src="static/js/normalizeCheats.js"></script>
+    <script src="static/js/window.js"></script>
+    <script src="static/js/script.js"></script>
   </body>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"
-  ></script>
-  <script src="static/js/normalizeCheats.js"></script>
-  <script src="static/js/window.js"></script>
-  <script src="static/js/script.js"></script>
 </html>

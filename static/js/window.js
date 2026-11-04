@@ -9,6 +9,7 @@
   const LAYER     = document.getElementById('menu');
   const WINDOW_EL = document.getElementById('cheatWindow');
   const TITLEBAR  = document.getElementById('windowTitlebar');
+  const RESIZE_HANDLE = document.querySelector('.window__resize');
   const MAX_BTN   = WINDOW_EL
     ? WINDOW_EL.querySelector('[data-window-action="maximize"]')
     : null;
@@ -25,8 +26,10 @@
     x: 0,
     y: 0,
     restore: null,
-    drag: null
+    drag: null,
+    resize: null
   };
+  let lastTrigger = document.querySelector('#main-content [data-window-toggle]') || SHOW_MENU;
 
   function setPosition(x, y) {
     if (!WINDOW_EL) return;
@@ -51,6 +54,17 @@
     state.positioned = true;
   }
 
+  function setSize(width, height) {
+    if (!WINDOW_EL || state.maximized || isMobileViewport()) return;
+    const maxWidth = Math.max(200, window.innerWidth - 24);
+    const maxHeight = Math.max(180, window.innerHeight - 24);
+    const minWidth = Math.min(320, maxWidth);
+    const minHeight = Math.min(280, maxHeight);
+    WINDOW_EL.style.width = `${clamp(width, minWidth, maxWidth)}px`;
+    WINDOW_EL.style.height = `${clamp(height, minHeight, maxHeight)}px`;
+    setPosition(state.x, state.y);
+  }
+
   function centerWindow() {
     if (!WINDOW_EL) return;
 
@@ -69,8 +83,15 @@
     );
   }
 
-  function open() {
+  function open(trigger) {
     if (!LAYER || !WINDOW_EL || state.open) return;
+    if (trigger && trigger.isConnected) {
+      const collapsedNav = trigger.closest('.collapse');
+      const navWillCollapse = window.innerWidth < 992 && collapsedNav;
+      lastTrigger = navWillCollapse
+        ? (document.querySelector('#main-content [data-window-toggle]') || trigger)
+        : trigger;
+    }
 
     state.open = true;
     state.minimized = false;
@@ -79,10 +100,18 @@
     LAYER.setAttribute('aria-hidden', 'false');
     WINDOW_EL.classList.remove('window--minimized');
 
-    if (!state.positioned) centerWindow();
-    else setPosition(state.x, state.y);
+    if (isMobileViewport()) {
+      WINDOW_EL.style.removeProperty('width');
+      WINDOW_EL.style.removeProperty('height');
+      centerWindow();
+    } else if (!state.positioned) {
+      centerWindow();
+    } else {
+      setPosition(state.x, state.y);
+    }
 
-    if (SHOW_MENU) SHOW_MENU.setAttribute('aria-expanded', 'true');
+    document.querySelectorAll('[data-window-toggle], #showMenu')
+      .forEach((triggerEl) => triggerEl.setAttribute('aria-expanded', 'true'));
 
     const activePanel = WINDOW_EL.querySelector('.win-panel.is-active');
     const searchInput =
@@ -109,10 +138,14 @@
     LAYER.classList.remove('is-open');
     LAYER.setAttribute('aria-hidden', 'true');
 
-    if (SHOW_MENU) {
-      SHOW_MENU.setAttribute('aria-expanded', 'false');
-      SHOW_MENU.focus({ preventScroll: true });
-    }
+    document.querySelectorAll('[data-window-toggle], #showMenu')
+      .forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+    const triggerIsInCollapsedNav = window.innerWidth < 992 && lastTrigger && lastTrigger.closest('.collapse');
+    const visibleTrigger = document.querySelector('#main-content [data-window-toggle]');
+    const focusTarget = triggerIsInCollapsedNav && visibleTrigger && visibleTrigger.isConnected
+      ? visibleTrigger
+      : (lastTrigger && lastTrigger.isConnected ? lastTrigger : SHOW_MENU);
+    if (focusTarget && focusTarget.isConnected) focusTarget.focus({ preventScroll: true });
   }
 
   function restoreFromMinimize() {
@@ -120,11 +153,13 @@
     state.minimized = false;
     WINDOW_EL.classList.remove('window--minimized');
     if (!state.maximized) setPosition(state.x, state.y);
+    document.querySelectorAll('[data-window-toggle], #showMenu')
+      .forEach((trigger) => trigger.setAttribute('aria-expanded', 'true'));
     WINDOW_EL.focus({ preventScroll: true });
   }
 
-  function toggle() {
-    if (!state.open)     return open();
+  function toggle(trigger) {
+    if (!state.open)     return open(trigger);
     if (state.minimized) return restoreFromMinimize();
     return close();
   }
@@ -133,7 +168,9 @@
     if (!WINDOW_EL || state.minimized) return;
     state.minimized = true;
     WINDOW_EL.classList.add('window--minimized');
-    if (SHOW_MENU) SHOW_MENU.focus({ preventScroll: true });
+    document.querySelectorAll('[data-window-toggle], #showMenu')
+      .forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+    if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus({ preventScroll: true });
   }
 
   function updateMaxButton() {
@@ -206,6 +243,69 @@
     BODY.classList.remove('is-window-dragging');
   }
 
+  function startResize(event) {
+    if (!WINDOW_EL || state.maximized || isMobileViewport()) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    state.resize = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: WINDOW_EL.offsetWidth,
+      startHeight: WINDOW_EL.offsetHeight
+    };
+    WINDOW_EL.classList.add('is-resizing');
+    try { RESIZE_HANDLE.setPointerCapture(event.pointerId); } catch {}
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  function onResizeMove(event) {
+    const resize = state.resize;
+    if (!resize || event.pointerId !== resize.pointerId) return;
+    setSize(resize.startWidth + event.clientX - resize.startX,
+            resize.startHeight + event.clientY - resize.startY);
+    event.preventDefault();
+  }
+
+  function endResize(event) {
+    const resize = state.resize;
+    if (!resize || event.pointerId !== resize.pointerId) return;
+    state.resize = null;
+    WINDOW_EL.classList.remove('is-resizing');
+    try { RESIZE_HANDLE.releasePointerCapture(event.pointerId); } catch {}
+  }
+
+  function resizeByKeyboard(event) {
+    const step = event.shiftKey ? 64 : 32;
+    const width = WINDOW_EL.offsetWidth;
+    const height = WINDOW_EL.offsetHeight;
+    const deltas = {
+      ArrowLeft: [-step, 0], ArrowRight: [step, 0],
+      ArrowUp: [0, -step], ArrowDown: [0, step]
+    };
+    const delta = deltas[event.key];
+    if (!delta || state.maximized || isMobileViewport()) return;
+    event.preventDefault();
+    setSize(width + delta[0], height + delta[1]);
+  }
+
+  function onViewportResize() {
+    if (!state.open || state.maximized) return;
+    if (isMobileViewport()) {
+      WINDOW_EL.style.removeProperty('width');
+      WINDOW_EL.style.removeProperty('height');
+    } else {
+      const width = WINDOW_EL.offsetWidth;
+      const height = WINDOW_EL.offsetHeight;
+      const maxWidth = Math.max(200, window.innerWidth - 24);
+      const maxHeight = Math.max(180, window.innerHeight - 24);
+      if (width > maxWidth || height > maxHeight) {
+        setSize(Math.min(width, maxWidth), Math.min(height, maxHeight));
+      }
+    }
+    setPosition(state.x, state.y);
+  }
+
   function init() {
     const missing = [];
     if (!LAYER)     missing.push('#menu');
@@ -218,30 +318,26 @@
     }
 
     if (SHOW_MENU) {
-      SHOW_MENU.addEventListener('click', toggle);
-      SHOW_MENU.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggle();
-        }
-      });
+      SHOW_MENU.addEventListener('click', () => toggle(SHOW_MENU));
     }
 
     document.querySelectorAll('[data-window-toggle]').forEach((el) => {
       if (el === SHOW_MENU) return;
-      el.addEventListener('click', toggle);
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggle();
-        }
-      });
+      el.addEventListener('click', () => toggle(el));
     });
 
     TITLEBAR.addEventListener('pointerdown', startDrag);
     TITLEBAR.addEventListener('pointermove', onDragMove);
     TITLEBAR.addEventListener('pointerup', endDrag);
     TITLEBAR.addEventListener('pointercancel', endDrag);
+
+    if (RESIZE_HANDLE) {
+      RESIZE_HANDLE.addEventListener('pointerdown', startResize);
+      RESIZE_HANDLE.addEventListener('pointermove', onResizeMove);
+      RESIZE_HANDLE.addEventListener('pointerup', endResize);
+      RESIZE_HANDLE.addEventListener('pointercancel', endResize);
+      RESIZE_HANDLE.addEventListener('keydown', resizeByKeyboard);
+    }
 
     TITLEBAR.addEventListener('dblclick', (e) => {
       if (e.target.closest('.window__btn')) return;
@@ -260,24 +356,15 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
-      if (!state.open || state.minimized) return;
-
-      const active = document.activeElement;
-      if (active && active.tagName === 'INPUT' && active.value) {
-        active.value = '';
-        active.dispatchEvent(new Event('input', { bubbles: true }));
-        return;
-      }
+      if (!state.open) return;
       close();
     });
 
-    window.addEventListener('resize', () => {
-      if (!state.open || state.maximized) return;
-      setPosition(state.x, state.y);
-    });
+    window.addEventListener('resize', onViewportResize);
 
     LAYER.setAttribute('aria-hidden', 'true');
-    if (SHOW_MENU) SHOW_MENU.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('[data-window-toggle], #showMenu')
+      .forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
     updateMaxButton();
   }
 

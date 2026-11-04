@@ -6,13 +6,10 @@
       label: 'Switch',
       platform: 'nx',
       cheatsUrls: [
-        'static/data/switch.json',
-        'https://raw.githubusercontent.com/blawar/titledb/refs/heads/master/cheats.json'
+        'api/v1/platforms/switch.json'
       ],
-      titleSources: [
-        'static/data/switch-titles.json'
-      ],
-      normalize: normalizeSwitch,
+      titleSources: [],
+      normalize: normalizeApiPlatform,
       searchId:  'switchSearch',
       resultsId: 'switchResults'
     },
@@ -20,12 +17,10 @@
       label: '3DS',
       platform: 'ctr',
       cheatsUrls: [
-        'static/data/3ds.json'
+        'api/v1/platforms/3ds.json'
       ],
-      titleSources: [
-        'static/data/3ds-titles.json'
-      ],
-      normalize: normalize3DS,
+      titleSources: [],
+      normalize: normalizeApiPlatform,
       searchId:  'search3ds',
       resultsId: 'results3ds'
     },
@@ -33,20 +28,32 @@
       label: 'GBA',
       platform: 'gba',
       cheatsUrls: [
-        'static/data/gba.json'
+        'api/v1/platforms/gba.json'
       ],
       titleSources: [],
-      normalize: normalizeGBA,
+      normalize: normalizeApiPlatform,
       searchId:  'searchGba',
       resultsId: 'resultsGba'
     }
   };
 
+  function normalizeApiPlatform(raw) {
+    if (!raw || !Array.isArray(raw.games)) return [];
+    return raw.games.map((game) => ({
+      tid: String(game.id || ''),
+      name: String(game.name || ''),
+      publisher: String(game.publisher || ''),
+      icon: String(game.icon || ''),
+      cheats: Array.isArray(game.cheats) ? game.cheats.map((cheat) => ({
+        name: String(cheat.name || 'Cheat'),
+        codes: Array.isArray(cheat.codes) ? cheat.codes.map(String) : [],
+        ...(cheat.buildId ? { buildId: String(cheat.buildId) } : {})
+      })) : []
+    })).filter((game) => game.tid);
+  }
+
   const SEARCH_LIMIT    = 100;
   const SEARCH_DEBOUNCE = 140;
-
-  const BODY         = document.body;
-  const THEME_SWITCH = document.getElementById('themeSwitch');
 
   const escapeHtml = (s) =>
     String(s).replace(/[&<>"']/g, (c) =>
@@ -80,32 +87,8 @@
     return '';
   }
 
-  function themeApply(theme, persist = true) {
-    if (!theme) return;
-    BODY.setAttribute('data-theme', theme);
-    if (persist) {
-      try { localStorage.setItem('theme', theme); } catch {}
-    }
-  }
-
   function themeInit() {
-    let stored = null;
-    try { stored = localStorage.getItem('theme'); } catch {}
-
-    if (stored === 'light' || stored === 'dark') {
-      themeApply(stored, false);
-    } else {
-      const prefersDark =
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-      themeApply(prefersDark ? 'dark' : 'light', false);
-    }
-
-    if (!THEME_SWITCH) return;
-
-    THEME_SWITCH.checked = BODY.getAttribute('data-theme') === 'dark';
-    THEME_SWITCH.addEventListener('change', () => {
-      themeApply(THEME_SWITCH.checked ? 'dark' : 'light');
-    });
+    if (window.NCheatsTheme) window.NCheatsTheme.init();
   }
 
   const libraries = {};
@@ -213,6 +196,7 @@
         }
 
         const cheatsMap = new Map();
+        const titlesMap = new Map();
 
         for (const raw of cheatRaws) {
           if (!raw) continue;
@@ -237,10 +221,17 @@
               seen.add(cheat.name);
             }
             cheatsMap.set(entry.tid, existing);
+
+            if (entry.name || entry.publisher || entry.icon) {
+              const title = titlesMap.get(entry.tid) || {};
+              titlesMap.set(entry.tid, {
+                name: entry.name || title.name || '',
+                publisher: entry.publisher || title.publisher || '',
+                icon: entry.icon || title.icon || ''
+              });
+            }
           }
         }
-
-        const titlesMap = new Map();
 
         for (const raw of titleRaws) {
           if (!raw) continue;
@@ -649,7 +640,7 @@
                ${storeUrl
                  ? `<a class="nlib-card__link nlib-card__link--store"
                        href="${escapeHtml(storeUrl)}"
-                       target="_blank" rel="noopener">
+                       target="_blank" rel="noopener noreferrer">
                      View on Nintendo
                      <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
                    </a>`
@@ -814,7 +805,7 @@
         }</span>
       </div>
       <div class="nlib-card__state" style="padding-top:0">
-        <a class="nlib-card__link" target="_blank" rel="noopener"
+        <a class="nlib-card__link" target="_blank" rel="noopener noreferrer"
            href="https://nlib.cc/${platform}/${encodeURIComponent(tid)}">
           Look up on nlib.cc
           <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>

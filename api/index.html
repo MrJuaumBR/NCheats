@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0e13" />
+    <meta name="description" content="NCheats versioned read-only JSON API reference and examples." />
+    <title>NCheats JSON API Reference</title>
+    <link rel="icon" href="../static/assets/ncheats-icon.svg" type="image/svg+xml" />
+    <script>
+      (() => {
+        const skins = ['default', 'cyberpunk', 'discord', 'solo-leveling', 'xbox-360', 'windows-xp'];
+        const modes = ['dark', 'light'];
+        const palettes = ['a', 'b', 'c', 'd'];
+        const valid = (value, choices, fallback) => choices.includes(value) ? value : fallback;
+        try {
+          const saved = JSON.parse(localStorage.getItem('ncheats:appearance') || '{}');
+          let legacyMode = '';
+          try { legacyMode = localStorage.getItem('theme') || ''; } catch {}
+          document.documentElement.dataset.skin = valid(saved.skin, skins, 'default');
+          document.documentElement.dataset.mode = valid(saved.mode, modes, valid(legacyMode, modes, 'dark'));
+          document.documentElement.dataset.palette = valid(saved.palette, palettes, 'a');
+        } catch {
+          document.documentElement.dataset.skin = 'default';
+          document.documentElement.dataset.mode = 'dark';
+          document.documentElement.dataset.palette = 'a';
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha384-blOohCVdhjmtROpu8+CfTnUWham9nkX7P7OZQMst+RUnhtoY/9qemFAkIKOYxDI3" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <link rel="stylesheet" href="../static/css/window.css" />
+    <link rel="stylesheet" href="../static/css/ecosystem.css" />
+  </head>
+  <body class="skin-default theme-dark palette-a" data-theme="dark">
+    <nav class="navbar navbar-expand-lg" aria-label="Site navigation">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../" aria-label="NCheats home">
+          <img src="../static/assets/ncheats-icon.svg" alt="" width="36" height="36" />
+          <span class="navbar-brand__long">NCheats API reference</span>
+          <span class="navbar-brand__short">NCheats API</span>
+        </a>
+        <div class="d-flex align-items-center gap-3 order-lg-last">
+          <details class="appearance-menu" id="appearanceMenu">
+            <summary aria-label="Appearance settings"><i class="fa-solid fa-palette" aria-hidden="true"></i><span>Appearance</span></summary>
+            <div class="appearance-menu__panel" aria-label="Appearance settings">
+              <label for="skinSelect">Skin</label>
+              <select id="skinSelect" name="skin">
+                <option value="default">Default / Ecosystem</option>
+                <option value="cyberpunk">Cyberpunk / Night City</option>
+                <option value="discord">Discord / Community</option>
+                <option value="solo-leveling">Solo Leveling / Shadow Monarch</option>
+                <option value="xbox-360">Xbox 360 / Blades and NXE</option>
+                <option value="windows-xp">Windows XP / Classic Luna</option>
+              </select>
+              <fieldset class="appearance-menu__group">
+                <legend>Appearance mode</legend>
+                <div class="appearance-mode">
+                  <label><input type="radio" name="themeMode" value="dark" /><span>Dark</span></label>
+                  <label><input type="radio" name="themeMode" value="light" /><span>Light</span></label>
+                </div>
+              </fieldset>
+              <fieldset class="appearance-menu__group">
+                <legend>Accent palette</legend>
+                <div class="palette-options">
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="a" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Amethyst</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="b" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Rose</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="c" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Graphite</span></label>
+                  <label class="palette-option" data-palette-option><input type="radio" name="themePalette" value="d" /><span class="palette-option__swatch" data-palette-swatch></span><span data-palette-label>Lagoon</span></label>
+                </div>
+              </fieldset>
+            </div>
+          </details>
+          <a class="btn btn--secondary" href="../#api">Cheat library</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container" id="main-content">
+      <section class="site-hero" aria-labelledby="pageTitle">
+        <p class="site-hero__eyebrow">NCheats · API v1 · Read only</p>
+        <h1 id="pageTitle">JSON API reference</h1>
+        <p>Static, public JSON files containing the same cheat records used by the NCheats browser library. No API key or account is required.</p>
+      </section>
+
+      <section class="api-section" aria-labelledby="baseUrlTitle">
+        <h2 id="baseUrlTitle">Base URL and endpoints</h2>
+        <p class="api-code"><code>https://mrjuaumbr.github.io/NCheats/api/v1/</code></p>
+        <div class="api-endpoints" aria-label="API endpoint list">
+          <div class="api-endpoint"><a href="v1/index.json">GET index.json</a><p>Version, build time, counts and endpoint URLs.</p></div>
+          <div class="api-endpoint"><a href="v1/cheats.json">GET cheats.json</a><p>All Switch, 3DS and GBA records in one response.</p></div>
+          <div class="api-endpoint"><a href="v1/platforms/switch.json">GET platforms/switch.json</a><p>All Switch titles and cheats.</p></div>
+          <div class="api-endpoint"><a href="v1/platforms/3ds.json">GET platforms/3ds.json</a><p>All 3DS titles and cheats.</p></div>
+          <div class="api-endpoint"><a href="v1/platforms/gba.json">GET platforms/gba.json</a><p>All GBA titles and cheats.</p></div>
+          <div class="api-endpoint"><a href="v1/openapi.json">GET openapi.json</a><p>OpenAPI 3.1 description of the read endpoints.</p></div>
+        </div>
+        <p class="api-notice">This is a static read-only API: query parameters do not filter or search on the server, and there are no write, pagination or dynamic game-lookup routes. Download the combined document or a platform file, then filter its <code>games</code> array in your client.</p>
+      </section>
+
+      <section class="api-section" aria-labelledby="responseTitle">
+        <h2 id="responseTitle">Response shape</h2>
+        <p>Each document includes <code>apiVersion</code> and <code>generatedAt</code>. Platform documents add an <code>id</code>, platform name, sources and counts. Each game record contains an ID, name, publisher, optional icon, and its cheats. The combined file also adds a <code>platform</code> field to each game.</p>
+        <pre class="api-code"><code>{
+  "apiVersion": "1.0.0",
+  "generatedAt": "2026-11-04T00:00:00.000Z",
+  "id": "switch",
+  "name": "Nintendo Switch",
+  "count": { "games": 1, "gamesWithCheats": 1, "cheats": 1 },
+  "games": [{
+    "id": "0100000000010000",
+    "name": "Example game",
+    "publisher": "",
+    "cheats": [{ "name": "Example cheat", "codes": ["00000000 00000000"] }]
+  }]
+}</code></pre>
+        <p>The example values above illustrate the schema only. Use the live JSON for current counts and records.</p>
+      </section>
+
+      <section class="api-section" aria-labelledby="examplesTitle">
+        <h2 id="examplesTitle">Usage examples</h2>
+        <h3>Fetch from JavaScript</h3>
+        <pre class="api-code"><code>const response = await fetch(
+  'https://mrjuaumbr.github.io/NCheats/api/v1/platforms/switch.json'
+);
+if (!response.ok) throw new Error(`HTTP ${response.status}`);
+const data = await response.json();
+const marioGames = data.games.filter((game) =&gt;
+  game.name.toLowerCase().includes('mario')
+);</code></pre>
+        <h3>Fetch with curl</h3>
+        <pre class="api-code"><code>curl https://mrjuaumbr.github.io/NCheats/api/v1/cheats.json</code></pre>
+        <p>For smaller downloads, prefer the relevant per-platform endpoint. Snapshots are rebuilt with <code>node scripts/build-api.js</code> (Node.js 18+ and network access to the current <a href="https://github.com/blawar/titledb">blawar/titledb</a> Switch fallback). Cheat data is attributed to <a href="https://github.com/FlagBrew/Sharkive">FlagBrew / Sharkive</a>, <a href="https://github.com/blawar/titledb">blawar / titledb</a> and <a href="https://www.libretro.com/">RetroArch / libretro-database</a>; see each source for its terms. NCheats is not affiliated with Nintendo.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p><a href="../">Back to NCheats</a> · <a href="/">Back to MrJuaumBR’s portfolio</a></p>
+        <small>Cheat data is provided as-is. NCheats is not affiliated with Nintendo.</small>
+      </div>
+    </footer>
+    <script src="../static/js/theme.js"></script>
+  </body>
+</html>
