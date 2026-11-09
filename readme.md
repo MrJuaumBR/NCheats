@@ -11,7 +11,7 @@ The site has no app backend, account or tracking. Preferences are stored locally
 - Ecosystem appearance controls: Default, Cyberpunk, Discord, Solo Leveling, Xbox 360 and Windows XP skins; dark and light modes; four palettes for each skin.
 - Theme preference persistence, keyboard-visible focus and reduced-motion support.
 - One-click copy for each cheat block.
-- Versioned JSON API with combined and per-platform datasets plus an OpenAPI 3.1 description.
+- Versioned JSON API with per-platform datasets for the complete library plus an OpenAPI 3.1 description.
 - Custom NCheats SVG brand icon.
 
 ## Use the website
@@ -28,13 +28,12 @@ On Switch and 3DS, title IDs are searchable (for example, `010099B00A2DC000`).
 Base URL: `https://mrjuaumbr.github.io/NCheats/api/v1/`
 
 - `index.json` — API version, generation timestamp, dataset counts and endpoint URLs.
-- `cheats.json` — all bundled records in one response; every game has a `platform` field.
 - `platforms/switch.json` — Switch.
 - `platforms/3ds.json` — 3DS.
 - `platforms/gba.json` — GBA.
 - `openapi.json` — OpenAPI 3.1 specification.
 
-This is a read-only static API. It does not evaluate query parameters, filter, paginate, search or accept writes. Download the combined or platform document and filter the `games` array in your client. Start with the [API documentation](api/README.md).
+This is a read-only static API. It does not evaluate query parameters, filter, paginate, search or accept writes. The three platform endpoints together contain every bundled cheat; fetch one or all three and filter the returned `games` arrays in your client. Start with the [API documentation](api/README.md).
 
 After changing the source datasets, regenerate the snapshots with:
 

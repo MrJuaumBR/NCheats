@@ -139,10 +139,6 @@ async function buildApi() {
     };
   });
 
-  const combinedGames = platforms.flatMap((platform) => platform.games.map((game) => ({
-    ...game,
-    platform: platform.id
-  })));
   const totals = platforms.reduce((sum, platform) => ({
     games: sum.games + platform.count.games,
     gamesWithCheats: sum.gamesWithCheats + platform.count.gamesWithCheats,
@@ -156,7 +152,6 @@ async function buildApi() {
     hosting: 'Static JSON files on GitHub Pages; query parameters are not server-side filters.',
     count: totals,
     endpoints: {
-      all: `${SITE}/api/v1/cheats.json`,
       switch: `${SITE}/api/v1/platforms/switch.json`,
       '3ds': `${SITE}/api/v1/platforms/3ds.json`,
       gba: `${SITE}/api/v1/platforms/gba.json`,
@@ -165,11 +160,8 @@ async function buildApi() {
   };
 
   fs.mkdirSync(OUTPUT, { recursive: true });
+  fs.rmSync(path.join(OUTPUT, 'cheats.json'), { force: true });
   writeJson('index.json', apiIndex);
-  writeJson('cheats.json', {
-    apiVersion: '1.0.0', generatedAt, count: totals,
-    platforms: platforms.map(({ games, ...summary }) => summary), games: combinedGames
-  });
   for (const platform of platforms) {
     writeJson(`platforms/${platform.id}.json`, { apiVersion: '1.0.0', generatedAt, ...platform });
   }
@@ -190,7 +182,6 @@ async function buildApi() {
     servers: [{ url: `${SITE}/api/v1` }],
     paths: {
       '/index.json': getPath('Get API version and dataset index', 'ApiIndex', 'getApiIndex'),
-      '/cheats.json': getPath('Get all bundled games and cheats across platforms', 'CombinedDataset', 'getAllCheats'),
       '/platforms/switch.json': getPath('Get Nintendo Switch game and cheat records', 'PlatformDataset', 'getSwitchCheats'),
       '/platforms/3ds.json': getPath('Get Nintendo 3DS game and cheat records', 'PlatformDataset', 'get3dsCheats'),
       '/platforms/gba.json': getPath('Get Game Boy Advance game and cheat records', 'PlatformDataset', 'getGbaCheats')
@@ -211,22 +202,6 @@ async function buildApi() {
             endpoints: { type: 'object', additionalProperties: { type: 'string', format: 'uri' } }
           }
         },
-        PlatformSummary: {
-          type: 'object', required: ['id', 'name', 'count'],
-          properties: {
-            id: { type: 'string', enum: ['switch', '3ds', 'gba'] }, name: { type: 'string' },
-            count: { $ref: '#/components/schemas/Count' }
-          }
-        },
-        CombinedDataset: {
-          type: 'object', required: ['apiVersion', 'generatedAt', 'count', 'platforms', 'games'],
-          properties: {
-            apiVersion: { type: 'string' }, generatedAt: { type: 'string', format: 'date-time' },
-            count: { $ref: '#/components/schemas/Count' },
-            platforms: { type: 'array', items: { $ref: '#/components/schemas/PlatformSummary' } },
-            games: { type: 'array', items: { $ref: '#/components/schemas/Game' } }
-          }
-        },
         PlatformDataset: {
           type: 'object', required: ['apiVersion', 'generatedAt', 'id', 'name', 'count', 'games'],
           properties: {
@@ -241,7 +216,6 @@ async function buildApi() {
           type: 'object', required: ['id', 'name', 'publisher', 'cheats'],
           properties: {
             id: { type: 'string' }, name: { type: 'string' }, publisher: { type: 'string' },
-            platform: { type: 'string', enum: ['switch', '3ds', 'gba'] },
             icon: { type: 'string', format: 'uri' },
             cheats: { type: 'array', items: { $ref: '#/components/schemas/Cheat' } }
           }

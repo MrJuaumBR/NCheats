@@ -89,18 +89,17 @@
         <p class="api-code"><code>https://mrjuaumbr.github.io/NCheats/api/v1/</code></p>
         <div class="api-endpoints" aria-label="API endpoint list">
           <div class="api-endpoint"><a href="v1/index.json">GET index.json</a><p>Version, build time, counts and endpoint URLs.</p></div>
-          <div class="api-endpoint"><a href="v1/cheats.json">GET cheats.json</a><p>All Switch, 3DS and GBA records in one response.</p></div>
           <div class="api-endpoint"><a href="v1/platforms/switch.json">GET platforms/switch.json</a><p>All Switch titles and cheats.</p></div>
           <div class="api-endpoint"><a href="v1/platforms/3ds.json">GET platforms/3ds.json</a><p>All 3DS titles and cheats.</p></div>
           <div class="api-endpoint"><a href="v1/platforms/gba.json">GET platforms/gba.json</a><p>All GBA titles and cheats.</p></div>
           <div class="api-endpoint"><a href="v1/openapi.json">GET openapi.json</a><p>OpenAPI 3.1 description of the read endpoints.</p></div>
         </div>
-        <p class="api-notice">This is a static read-only API: query parameters do not filter or search on the server, and there are no write, pagination or dynamic game-lookup routes. Download the combined document or a platform file, then filter its <code>games</code> array in your client.</p>
+        <p class="api-notice">This is a static read-only API: query parameters do not filter or search on the server, and there are no write, pagination or dynamic game-lookup routes. Fetch the three platform documents to retrieve the complete library, or fetch just one platform to keep downloads smaller.</p>
       </section>
 
       <section class="api-section" aria-labelledby="responseTitle">
         <h2 id="responseTitle">Response shape</h2>
-        <p>Each document includes <code>apiVersion</code> and <code>generatedAt</code>. Platform documents add an <code>id</code>, platform name, sources and counts. Each game record contains an ID, name, publisher, optional icon, and its cheats. The combined file also adds a <code>platform</code> field to each game.</p>
+        <p>Each document includes <code>apiVersion</code> and <code>generatedAt</code>. Platform documents add an <code>id</code>, platform name, sources and counts. Each game record contains an ID, name, publisher, optional icon, and its cheats.</p>
         <pre class="api-code"><code>{
   "apiVersion": "1.0.0",
   "generatedAt": "2026-11-04T00:00:00.000Z",
@@ -129,7 +128,9 @@ const marioGames = data.games.filter((game) =&gt;
   game.name.toLowerCase().includes('mario')
 );</code></pre>
         <h3>Fetch with curl</h3>
-        <pre class="api-code"><code>curl https://mrjuaumbr.github.io/NCheats/api/v1/cheats.json</code></pre>
+        <pre class="api-code"><code>curl https://mrjuaumbr.github.io/NCheats/api/v1/platforms/switch.json
+curl https://mrjuaumbr.github.io/NCheats/api/v1/platforms/3ds.json
+curl https://mrjuaumbr.github.io/NCheats/api/v1/platforms/gba.json</code></pre>
         <p>For smaller downloads, prefer the relevant per-platform endpoint. Snapshots are rebuilt with <code>node scripts/build-api.js</code> (Node.js 18+ and network access to the current <a href="https://github.com/blawar/titledb">blawar/titledb</a> Switch fallback). Cheat data is attributed to <a href="https://github.com/FlagBrew/Sharkive">FlagBrew / Sharkive</a>, <a href="https://github.com/blawar/titledb">blawar / titledb</a> and <a href="https://www.libretro.com/">RetroArch / libretro-database</a>; see each source for its terms. NCheats is not affiliated with Nintendo.</p>
       </section>
     </main>

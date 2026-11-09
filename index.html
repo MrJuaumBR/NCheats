@@ -174,7 +174,6 @@
           <h2 id="apiTitle">NCheats JSON API</h2>
           <p class="api-section__intro">Use the versioned, read-only JSON snapshots to get every bundled cheat record. No key or account is needed.</p>
           <div class="api-endpoints" aria-label="JSON API endpoints">
-            <div class="api-endpoint"><a href="api/v1/cheats.json">All platforms · cheats.json</a><p>One response with every Switch, 3DS and GBA game and cheat.</p></div>
             <div class="api-endpoint"><a href="api/v1/platforms/switch.json">Nintendo Switch</a><p>Switch titles, metadata and cheat codes.</p></div>
             <div class="api-endpoint"><a href="api/v1/platforms/3ds.json">Nintendo 3DS</a><p>3DS titles, metadata and cheat codes.</p></div>
             <div class="api-endpoint"><a href="api/v1/platforms/gba.json">Game Boy Advance</a><p>GBA titles and cheat codes.</p></div>
@@ -184,7 +183,7 @@
           <pre class="api-code"><code>fetch('https://mrjuaumbr.github.io/NCheats/api/v1/platforms/switch.json')
   .then((response) =&gt; response.json())
   .then((data) =&gt; console.log(data.games));</code></pre>
-          <p class="api-notice">GitHub Pages serves static files: this API is read-only and does not process filters, searches or query parameters on the server. Download the relevant JSON file and filter its <code>games</code> array in your app. Data is a snapshot; it changes when the repository’s datasets are refreshed.</p>
+          <p class="api-notice">GitHub Pages serves static files: this API is read-only and does not process filters, searches or query parameters on the server. These three platform feeds together contain every bundled cheat; download one or fetch all three, then filter their <code>games</code> arrays in your app. Data is a snapshot; it changes when the repository’s datasets are refreshed.</p>
           <p>Read the <a href="api/">API reference and response examples</a> for endpoint details and attribution.</p>
         </section>
         <hr>
